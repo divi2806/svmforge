@@ -1,0 +1,37 @@
+[package]
+name = "svmforge"
+version = "0.1.0"
+edition = "2021"
+description = "Lightweight Solana SVM program test harness — Node.js bindings"
+repository = "https://github.com/NinjasPyajamas/svmforge"
+license = "Apache-2.0"
+authors = []
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+# Enable protobuf fixture support (load/run .pb and .json fixture files).
+fuzz = ["mollusk-svm/fuzz", "dep:mollusk-svm-fuzz-fixture"]
+
+[dependencies]
+mollusk-svm        = { path = "../harness" }
+mollusk-svm-result = { path = "../result" }
+mollusk-svm-fuzz-fixture = { path = "../fuzz/fixture", optional = true }
+
+napi        = { version = ">=2.0, <2.17", default-features = false, features = ["napi8"] }
+napi-derive = ">=2.0, <2.17"
+
+solana-account         = "3.2.0"
+solana-compute-budget  = "3.1.0"
+solana-instruction     = "3.1"
+solana-instruction-error = { version = "2.0" }
+solana-program-error   = "3.0"
+solana-pubkey          = "4.0"
+solana-system-interface = "2.0"
+
+[build-dependencies]
+napi-build = ">=2.0, <2.3"
+
+[profile.release]
+lto = true

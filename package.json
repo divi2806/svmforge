@@ -1,0 +1,72 @@
+{
+  "name": "svmforge",
+  "version": "0.1.0",
+  "description": "Lightweight Solana SVM program test harness — Node.js bindings for mollusk-svm",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NinjasPyajamas/svmforge.git"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "solana",
+    "svm",
+    "test",
+    "harness",
+    "bpf",
+    "anchor",
+    "program",
+    "blockchain"
+  ],
+  "engines": {
+    "node": ">= 18"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi build --platform --release",
+    "version": "napi version",
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "napi": {
+    "name": "svmforge",
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "aarch64-apple-darwin",
+        "x86_64-apple-darwin",
+        "x86_64-unknown-linux-gnu",
+        "aarch64-unknown-linux-gnu",
+        "x86_64-pc-windows-msvc"
+      ]
+    }
+  },
+  "optionalDependencies": {
+    "svmforge-darwin-arm64": "0.1.0",
+    "svmforge-darwin-x64": "0.1.0",
+    "svmforge-linux-x64-gnu": "0.1.0",
+    "svmforge-linux-arm64-gnu": "0.1.0",
+    "svmforge-win32-x64-msvc": "0.1.0"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.4",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.2",
+    "typescript": "^5.5.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        { "tsconfig": "tsconfig.json" }
+      ]
+    },
+    "testRegex": "__test__/.*\\.spec\\.ts$"
+  }
+}

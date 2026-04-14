@@ -1,0 +1,14 @@
+{
+  "name": "svmforge-win32-x64-msvc",
+  "version": "0.1.0",
+  "description": "svmforge native bindings (Windows x64)",
+  "os": ["win32"],
+  "cpu": ["x64"],
+  "main": "svmforge.win32-x64-msvc.node",
+  "files": ["svmforge.win32-x64-msvc.node"],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NinjasPyajamas/svmforge.git"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "svmforge-darwin-arm64",
+  "version": "0.1.0",
+  "description": "svmforge native bindings (macOS Apple Silicon)",
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "main": "svmforge.darwin-arm64.node",
+  "files": ["svmforge.darwin-arm64.node"],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NinjasPyajamas/svmforge.git"
+  }
+}
