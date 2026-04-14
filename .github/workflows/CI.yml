@@ -105,7 +105,7 @@ jobs:
         run: cargo build-sbf --manifest-path test-programs/escrow-vault/Cargo.toml
       - run: npm test
         env:
-          SBF_OUT_DIR: ${{ github.workspace }}/target/deploy
+          SBF_OUT_DIR: ${{ github.workspace }}/test-programs/escrow-vault/target/deploy
 
   # ── Publish to npm (only on tag push v*) ─────────────────────────────────────
   publish:
