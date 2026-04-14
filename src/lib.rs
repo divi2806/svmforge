@@ -1011,9 +1011,36 @@ impl MolluskContext {
             .into_iter()
             .map(into_instruction)
             .collect::<Result<Vec<_>>>()?;
-        Ok(from_transaction_result(
-            self.inner.process_transaction_instructions(&ixs),
-        ))
+
+        // Collect all accounts referenced by these instructions from the store.
+        // MolluskContext 0.12.0 doesn't expose process_transaction_instructions
+        // directly, so we replicate its load + dispatch + store-back pattern.
+        let accounts: Vec<(Pubkey, Account)> = {
+            let store = self.inner.account_store.borrow();
+            let mut seen = std::collections::HashSet::new();
+            let mut acc_list = Vec::new();
+            for ix in &ixs {
+                for meta in &ix.accounts {
+                    if seen.insert(meta.pubkey) {
+                        let account = store.get(&meta.pubkey).cloned().unwrap_or_default();
+                        acc_list.push((meta.pubkey, account));
+                    }
+                }
+            }
+            acc_list
+        };
+
+        let result = self.inner.mollusk.process_transaction_instructions(&ixs, &accounts);
+
+        // Persist resulting accounts on success (mirrors consume_mollusk_result).
+        if result.program_result.is_ok() {
+            let mut store = self.inner.account_store.borrow_mut();
+            for (pubkey, account) in &result.resulting_accounts {
+                store.insert(*pubkey, account.clone());
+            }
+        }
+
+        Ok(from_transaction_result(result))
     }
 
     // ── config (delegates to inner.mollusk) ───────────────────────────────────

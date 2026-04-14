@@ -15,11 +15,11 @@ crate-type = ["cdylib"]
 fuzz = ["mollusk-svm/fuzz", "dep:mollusk-svm-fuzz-fixture"]
 
 [dependencies]
-mollusk-svm              = { path = "../harness" }
-mollusk-svm-result       = { path = "../result" }
-mollusk-svm-fuzz-fixture = { path = "../fuzz/fixture", optional = true }
-mollusk-svm-programs-token = { path = "../programs/token" }
-mollusk-svm-programs-memo  = { path = "../programs/memo" }
+mollusk-svm              = "0.12.0"
+mollusk-svm-result       = "0.12.0"
+mollusk-svm-fuzz-fixture = { version = "0.12.0", optional = true }
+mollusk-svm-programs-token = "0.12.0"
+mollusk-svm-programs-memo  = "0.12.0"
 
 napi        = { version = ">=2.0, <2.17", default-features = false, features = ["napi8"] }
 napi-derive = ">=2.0, <2.17"
