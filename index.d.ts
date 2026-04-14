@@ -173,6 +173,14 @@ export declare function systemAccount(lamports: bigint): JsAccount
  * ```
  */
 export declare function emptyAccount(owner: string, space: number, lamports: bigint): JsAccount
+/** Program ID for SPL Token (`TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`) */
+export const SPL_TOKEN_PROGRAM_ID: string
+/** Program ID for SPL Token-2022 (`TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`) */
+export const SPL_TOKEN_2022_PROGRAM_ID: string
+/** Program ID for Associated Token Account (`ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`) */
+export const ASSOCIATED_TOKEN_PROGRAM_ID: string
+/** Program ID for SPL Memo (`MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr`) */
+export const MEMO_PROGRAM_ID: string
 /**
  * Lightweight Solana program test harness.
  *
@@ -280,6 +288,24 @@ export declare class MolluskSvm {
    * ```
    */
   deactivateFeature(featureId: string): void
+  /**
+   * Load the bundled SPL Token program into this harness.
+   *
+   * After calling this, any instruction that CPIs into SPL Token will work
+   * without needing to provide the program account or any `.so` file.
+   *
+   * ```ts
+   * const svm = new MolluskSvm(MY_PROGRAM_ID, 'target/deploy/my_program');
+   * svm.addSplToken();
+   * ```
+   */
+  addSplToken(): void
+  /** Load the bundled SPL Token-2022 program into this harness. */
+  addSplToken2022(): void
+  /** Load the bundled SPL Associated Token Account program into this harness. */
+  addAssociatedToken(): void
+  /** Load the bundled SPL Memo program into this harness. */
+  addMemo(): void
 }
 /**
  * Stateful wrapper around `MolluskSvm` with an in-memory account store.
@@ -351,4 +377,12 @@ export declare class MolluskContext {
   setClockUnixTimestamp(unixTimestamp: number): void
   /** Calculate the minimum lamports for rent exemption given `dataLen`. */
   getRentMinimumBalance(dataLen: number): bigint
+  /** Load the bundled SPL Token program into this context. */
+  addSplToken(): void
+  /** Load the bundled SPL Token-2022 program into this context. */
+  addSplToken2022(): void
+  /** Load the bundled SPL Associated Token Account program into this context. */
+  addAssociatedToken(): void
+  /** Load the bundled SPL Memo program into this context. */
+  addMemo(): void
 }

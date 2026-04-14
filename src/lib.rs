@@ -1049,6 +1049,90 @@ impl MolluskContext {
     }
 }
 
+// ── SPL program IDs ───────────────────────────────────────────────────────────
+
+/// Program ID for SPL Token (`TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`)
+#[napi]
+pub const SPL_TOKEN_PROGRAM_ID: &str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+
+/// Program ID for SPL Token-2022 (`TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`)
+#[napi]
+pub const SPL_TOKEN_2022_PROGRAM_ID: &str = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
+
+/// Program ID for Associated Token Account (`ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`)
+#[napi]
+pub const ASSOCIATED_TOKEN_PROGRAM_ID: &str = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
+
+/// Program ID for SPL Memo (`MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr`)
+#[napi]
+pub const MEMO_PROGRAM_ID: &str = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
+
+// ── SPL program loaders — MolluskSvm ──────────────────────────────────────────
+
+#[napi]
+impl MolluskSvm {
+    /// Load the bundled SPL Token program into this harness.
+    ///
+    /// After calling this, any instruction that CPIs into SPL Token will work
+    /// without needing to provide the program account or any `.so` file.
+    ///
+    /// ```ts
+    /// const svm = new MolluskSvm(MY_PROGRAM_ID, 'target/deploy/my_program');
+    /// svm.addSplToken();
+    /// ```
+    #[napi]
+    pub fn add_spl_token(&mut self) {
+        mollusk_svm_programs_token::token::add_program(&mut self.inner);
+    }
+
+    /// Load the bundled SPL Token-2022 program into this harness.
+    #[napi]
+    pub fn add_spl_token_2022(&mut self) {
+        mollusk_svm_programs_token::token2022::add_program(&mut self.inner);
+    }
+
+    /// Load the bundled SPL Associated Token Account program into this harness.
+    #[napi]
+    pub fn add_associated_token(&mut self) {
+        mollusk_svm_programs_token::associated_token::add_program(&mut self.inner);
+    }
+
+    /// Load the bundled SPL Memo program into this harness.
+    #[napi]
+    pub fn add_memo(&mut self) {
+        mollusk_svm_programs_memo::memo::add_program(&mut self.inner);
+    }
+}
+
+// ── SPL program loaders — MolluskContext ──────────────────────────────────────
+
+#[napi]
+impl MolluskContext {
+    /// Load the bundled SPL Token program into this context.
+    #[napi]
+    pub fn add_spl_token(&mut self) {
+        mollusk_svm_programs_token::token::add_program(&mut self.inner.mollusk);
+    }
+
+    /// Load the bundled SPL Token-2022 program into this context.
+    #[napi]
+    pub fn add_spl_token_2022(&mut self) {
+        mollusk_svm_programs_token::token2022::add_program(&mut self.inner.mollusk);
+    }
+
+    /// Load the bundled SPL Associated Token Account program into this context.
+    #[napi]
+    pub fn add_associated_token(&mut self) {
+        mollusk_svm_programs_token::associated_token::add_program(&mut self.inner.mollusk);
+    }
+
+    /// Load the bundled SPL Memo program into this context.
+    #[napi]
+    pub fn add_memo(&mut self) {
+        mollusk_svm_programs_memo::memo::add_program(&mut self.inner.mollusk);
+    }
+}
+
 // ── Fixture support ───────────────────────────────────────────────────────────
 //
 // Gated behind the `fuzz` cargo feature:

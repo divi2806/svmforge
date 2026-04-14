@@ -540,6 +540,156 @@ interface TransactionResult extends InstructionResult {
 
 ---
 
+## SPL Token / Token-2022 / ATA / Memo (zero toolchain)
+
+svmforge ships with ELF binaries for the four most-used Solana programs embedded directly in the `.node` binary. No `.so` files, no Solana toolchain, no `solana-test-validator` — just call one method:
+
+```typescript
+import {
+  MolluskSvm,
+  SPL_TOKEN_PROGRAM_ID,
+  SPL_TOKEN_2022_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  MEMO_PROGRAM_ID,
+} from 'svmforge';
+
+const svm = MolluskSvm.createDefault();
+
+svm.addSplToken();          // SPL Token (classic)
+svm.addSplToken2022();      // SPL Token-2022
+svm.addAssociatedToken();   // Associated Token Account
+svm.addMemo();              // Memo program
+```
+
+The same methods are available on `MolluskContext`:
+
+```typescript
+const ctx = MolluskContext.createDefault();
+ctx.addSplToken();
+```
+
+Once loaded, any instruction in your test that CPIs into that program will execute the real ELF — including complex token operations like `Transfer`, `MintTo`, `Burn`, `CreateAssociatedTokenAccount`, etc.
+
+### Program ID constants
+
+```typescript
+SPL_TOKEN_PROGRAM_ID          // "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+SPL_TOKEN_2022_PROGRAM_ID     // "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+ASSOCIATED_TOKEN_PROGRAM_ID   // "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+MEMO_PROGRAM_ID               // "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
+```
+
+Use these constants as the `programId` when building SPL instructions, so you never have to hardcode a base58 string.
+
+### Example: SPL Token Transfer
+
+```typescript
+import { MolluskSvm, MolluskContext, SPL_TOKEN_PROGRAM_ID, checkSuccess } from 'svmforge';
+
+// Build SPL Token Transfer instruction (variant 3)
+function splTransferIx(source: string, dest: string, owner: string, amount: bigint) {
+  const data = Buffer.alloc(9);
+  data[0] = 3; // Transfer
+  data.writeBigUInt64LE(amount, 1);
+  return {
+    programId: SPL_TOKEN_PROGRAM_ID,
+    accounts: [
+      { pubkey: source, isSigner: false, isWritable: true },
+      { pubkey: dest,   isSigner: false, isWritable: true },
+      { pubkey: owner,  isSigner: true,  isWritable: false },
+    ],
+    data,
+  };
+}
+
+const ctx = MolluskContext.createDefault();
+ctx.addSplToken(); // load bundled ELF — zero setup
+
+ctx.setAccount(SOURCE, myTokenAccount);
+ctx.setAccount(DEST,   destinationTokenAccount);
+
+ctx.processAndValidateInstruction(
+  splTransferIx(SOURCE, DEST, OWNER, 500_000_000n),
+  [checkSuccess()],
+);
+```
+
+See [`examples/03_spl_token_cpi.ts`](./examples/03_spl_token_cpi.ts) for a full runnable example including reading token balances from raw account data.
+
+---
+
+## Gotchas
+
+### Field names are camelCase — always
+
+svmforge uses [napi-rs](https://napi.rs/) to generate its TypeScript bindings. napi-rs **always converts Rust `snake_case` field names to TypeScript `camelCase`**. This is hardcoded — you cannot opt out.
+
+| Rust field | TypeScript field |
+|---|---|
+| `is_signer` | `isSigner` |
+| `is_writable` | `isWritable` |
+| `rent_epoch` | `rentEpoch` |
+| `program_id` | `programId` |
+| `compute_units_consumed` | `computeUnitsConsumed` |
+| `resulting_accounts` | `resultingAccounts` |
+| `return_data` | `returnData` |
+| `failing_instruction_index` | `failingInstructionIndex` |
+
+**The fix**: always use the generated `index.d.ts` as the source of truth, not the underlying Rust struct names. Your IDE will show you the correct names via IntelliSense the moment you type `result.` or `{ pubkey:`. TypeScript will also catch wrong names at compile time.
+
+> If you're coming from the Rust `mollusk-svm` crate and copy-pasting struct field names, every `snake_case` name will be a compile error in TypeScript. Just rename them — it takes 10 seconds.
+
+### `lamports` and `rentEpoch` are `bigint`, not `number`
+
+JavaScript's `Number` type can only represent integers up to 2^53 − 1 (~9 quadrillion). Large SOL balances and epoch values overflow that. svmforge uses `bigint` for all lamport and epoch fields. Always use the `n` suffix:
+
+```typescript
+// Wrong — silently loses precision for large values
+const balance = 10_000_000_000; // number
+
+// Correct
+const balance = 10_000_000_000n; // bigint
+```
+
+You cannot mix `bigint` and `number` in arithmetic. If you need to convert:
+```typescript
+Number(result.computeUnitsConsumed) // safe — CU counts fit in Number
+```
+
+### `programPath` does not include the `.so` extension
+
+```typescript
+// Wrong
+new MolluskSvm(PROGRAM_ID, 'target/deploy/my_program.so');
+
+// Correct — Mollusk appends .so automatically
+new MolluskSvm(PROGRAM_ID, 'target/deploy/my_program');
+```
+
+### Custom programs need `SBF_OUT_DIR` for relative paths
+
+When using a relative path for your program, set the `SBF_OUT_DIR` env variable so Mollusk knows where to look:
+
+```bash
+SBF_OUT_DIR=./target/deploy npx jest
+```
+
+Or set it in your `jest` config / test runner. Absolute paths work without it.
+
+### All accounts touched by the instruction must be passed
+
+The SVM does not fetch missing accounts — it only sees what you give it. If your instruction references an account you forgot to pass, the program will typically receive a zeroed/default account, which may cause unexpected failures or panics.
+
+```typescript
+// Missing the escrow account — program sees zeroed data for it
+svm.processInstruction(ix, [
+  { pubkey: AUTHORITY, account: systemAccount(10_000_000_000n) },
+  // ← ESCROW missing — this will likely fail or behave incorrectly
+]);
+```
+
+---
+
 ## Examples
 
 Full runnable examples are in [`examples/`](./examples/).

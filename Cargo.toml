@@ -3,7 +3,7 @@ name = "svmforge"
 version = "0.1.0"
 edition = "2021"
 description = "Lightweight Solana SVM program test harness — Node.js bindings"
-repository = "https://github.com/NinjasPyajamas/svmforge"
+repository = "https://github.com/divi2806/svmforge"
 license = "Apache-2.0"
 authors = []
 
@@ -15,9 +15,11 @@ crate-type = ["cdylib"]
 fuzz = ["mollusk-svm/fuzz", "dep:mollusk-svm-fuzz-fixture"]
 
 [dependencies]
-mollusk-svm        = { path = "../harness" }
-mollusk-svm-result = { path = "../result" }
+mollusk-svm              = { path = "../harness" }
+mollusk-svm-result       = { path = "../result" }
 mollusk-svm-fuzz-fixture = { path = "../fuzz/fixture", optional = true }
+mollusk-svm-programs-token = { path = "../programs/token" }
+mollusk-svm-programs-memo  = { path = "../programs/memo" }
 
 napi        = { version = ">=2.0, <2.17", default-features = false, features = ["napi8"] }
 napi-derive = ">=2.0, <2.17"

@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { checkSuccess, checkErr, checkComputeUnits, checkReturnData, checkAccountLamports, checkAccountOwner, checkAccountData, checkAccountSpace, checkAccountExecutable, checkAccountClosed, MolluskSvm, systemAccount, emptyAccount, MolluskContext } = nativeBinding
+const { checkSuccess, checkErr, checkComputeUnits, checkReturnData, checkAccountLamports, checkAccountOwner, checkAccountData, checkAccountSpace, checkAccountExecutable, checkAccountClosed, MolluskSvm, systemAccount, emptyAccount, MolluskContext, SPL_TOKEN_PROGRAM_ID, SPL_TOKEN_2022_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, MEMO_PROGRAM_ID } = nativeBinding
 
 module.exports.checkSuccess = checkSuccess
 module.exports.checkErr = checkErr
@@ -326,3 +326,7 @@ module.exports.MolluskSvm = MolluskSvm
 module.exports.systemAccount = systemAccount
 module.exports.emptyAccount = emptyAccount
 module.exports.MolluskContext = MolluskContext
+module.exports.SPL_TOKEN_PROGRAM_ID = SPL_TOKEN_PROGRAM_ID
+module.exports.SPL_TOKEN_2022_PROGRAM_ID = SPL_TOKEN_2022_PROGRAM_ID
+module.exports.ASSOCIATED_TOKEN_PROGRAM_ID = ASSOCIATED_TOKEN_PROGRAM_ID
+module.exports.MEMO_PROGRAM_ID = MEMO_PROGRAM_ID
