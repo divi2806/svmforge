@@ -81,15 +81,54 @@ svmforge hands these directly to the SVM, captures the result, and returns it. N
 
 ## Installation
 
+### New project from scratch
+
 ```bash
+mkdir my-solana-tests && cd my-solana-tests
+npm init -y
+
+# svmforge itself
 npm install svmforge
-# or
-yarn add svmforge
-# or
-pnpm add svmforge
+
+# test runner + TypeScript (choose jest or vitest)
+npm install --save-dev jest ts-jest typescript @types/jest @types/node
 ```
 
-> **Requirements**: Node.js >= 18. Pre-built native binaries are included for macOS (Apple Silicon + Intel), Linux (x64 + arm64 glibc), and Windows (x64). No Rust toolchain required to use the package.
+Add a minimal `tsconfig.json`:
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true
+  }
+}
+```
+
+Add Jest config to `package.json`:
+```json
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.tsx?$": ["ts-jest", { "tsconfig": "tsconfig.json" }]
+    },
+    "testRegex": ".*\\.spec\\.ts$"
+  }
+}
+```
+
+### Adding to an existing project
+
+```bash
+npm install svmforge
+```
+
+> **Requirements**: Node.js >= 18. Pre-built native binaries are included for macOS (Apple Silicon + Intel), Linux (x64 + arm64 glibc), and Windows (x64). No Rust toolchain required to use svmforge itself.
 
 ---
 
