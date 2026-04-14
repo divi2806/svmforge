@@ -97,6 +97,10 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: npm install
       - run: npm run build
+      - name: Install Solana toolchain
+        run: |
+          sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
       - name: Build escrow-vault test program
         run: cargo build-sbf --manifest-path test-programs/escrow-vault/Cargo.toml
       - run: npm test
