@@ -909,26 +909,34 @@ Pre-built binaries are included for all major platforms:
 
 svmforge follows the [napi-rs](https://napi.rs/) platform sub-package convention. The main `svmforge` package specifies five platform packages as `optionalDependencies`. npm installs only the one matching your OS and CPU.
 
-### Build locally
+### Running tests with a custom program
 
 ```bash
-cd node
+# Set SBF_OUT_DIR to where your compiled .so lives, then run jest
+SBF_OUT_DIR=./target/deploy npm test
+```
+
+This tells svmforge where to find your compiled program. If you use an absolute path in `new MolluskSvm()`, you don't need this variable at all.
+
+### Build from source
+
+Requires: Rust 1.89+, Node.js 18+, `protoc` (only for the fuzz feature).
+
+```bash
 npm install
 npm run build       # release build for current platform
 npm run build:debug # faster debug build
 npm test            # run test suite
 ```
 
-Requirements: Rust 1.86+ (see workspace `rust-toolchain.toml`), `protoc` (for the fuzz feature only).
-
-### Publish to npm
+### Publish to npm (maintainers)
 
 1. Create an **Automation** token at npmjs.com → Account Settings → Access Tokens.
-2. Add it as `NPM_TOKEN` in your GitHub repo → Settings → Secrets.
-3. Tag a release:
+2. Add it as `NPM_TOKEN` in your GitHub repo → Settings → Secrets → Actions.
+3. Bump the version in `package.json` and all `npm/*/package.json` files.
+4. Tag and push:
 
 ```bash
-# Bump version in node/package.json and all node/npm/*/package.json files
 git add .
 git commit -m "bump version to 0.2.0"
 git tag v0.2.0
